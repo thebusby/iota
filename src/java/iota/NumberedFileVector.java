@@ -15,6 +15,7 @@ public class NumberedFileVector extends FileVector {
 
     // Append line number to beginning of line
     protected String getLine(FileVector v, int i) {
-	return i + this.delim + super.getLine(v,i);
+	String line = super.getLine(v,i);	
+	return i + this.delim + (line!=null ? line : "");
     }
 }

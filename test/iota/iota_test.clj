@@ -8,8 +8,9 @@
 (def test-dims [3768 13])
 (def test-data (let [[rows columns] test-dims]
                  (->> (range rows)
-                      (mapv  (comp vec #(range % (+ % columns))))
-                      vec)))
+                      (mapv  (comp vec #(range % (+ % columns))))                      
+                      vec
+                      (#(conj % [0] nil nil nil [42])))))
 (def ^:dynamic test-vec nil)
 (def ^:dynamic test-nvec nil)
 
@@ -17,7 +18,11 @@
 (defn parse-line [^String line]
   "Convert a line of the TSV file back into a vec of longs"
   (->> (clojure.string/split line #"[\t]" -1)
-       (mapv #(Long/parseLong %))))
+       (keep (fn [^String x]
+               (if (.isEmpty x) 
+                 nil 
+                 (Long/parseLong x))))
+       vec))
 
 (defn fixture-tsv [f]
   "Setup a file full of test-data in system's temp dir
@@ -152,54 +157,66 @@
 
 (deftest test-total-sum
   (is (= (->> test-data
+              (filter identity)
               (map (partial reduce +))
               (reduce +))
          (->> test-vec
+              (filter identity)
               (map parse-line)
               (map (partial reduce +))
               (reduce +)))))
 
 (deftest test-total-sum-with-reducers
   (is (= (->> test-data
+              (r/filter identity)
               (r/map (partial reduce +))
               (r/reduce +))
          (->> test-vec
+              (r/filter identity)
               (r/map parse-line)
               (r/map (partial reduce +))
               (r/reduce +)))))
 
 (deftest test-total-sum-with-fold
   (is (= (->> test-data
+              (r/filter identity)
               (r/map (partial reduce +))
               (r/fold +))
          (->> test-vec
+              (r/filter identity)
               (r/map parse-line)
               (r/map (partial reduce +))
               (r/fold +)))))
 
 (deftest test-total-sum-n
   (is (= (->> test-data
+              (filter identity)
               (map (partial reduce +))
               (reduce +))
          (->> test-nvec
+              (filter identity)
               (map (comp rest parse-line))
               (map (partial reduce +))
               (reduce +)))))
 
 (deftest test-total-sum-with-reducers-n
   (is (= (->> test-data
+              (r/filter identity)
               (r/map (partial reduce +))
               (r/reduce +))
          (->> test-nvec
+              (r/filter identity)
               (r/map (comp rest parse-line))
               (r/map (partial reduce +))
               (r/reduce +)))))
 
 (deftest test-total-sum-with-fold-n
   (is (= (->> test-data
+              (r/filter identity)
               (r/map (partial reduce +))
               (r/fold +))
          (->> test-nvec
+              (r/filter identity)
               (r/map (comp rest parse-line))
               (r/map (partial reduce +))
               (r/fold +)))))
@@ -208,11 +225,13 @@
   (is (= (->> (subvec test-data
                       (* 0.3 (first test-dims))
                       (* 0.7 (first test-dims)))
+              (filter identity)
               (map (partial reduce +))
               (reduce +))
          (->> (io/subvec test-vec
                          (* 0.3 (first test-dims))
                          (* 0.7 (first test-dims)))
+              (filter identity)
               (map parse-line)
               (map (partial reduce +))
               (reduce +)))))
@@ -221,11 +240,13 @@
   (is (= (->> (subvec test-data
                       (* 0.3 (first test-dims))
                       (* 0.7 (first test-dims)))
+              (r/filter identity)
               (r/map (partial reduce +))
               (r/reduce +))
          (->> (io/subvec test-vec
                          (* 0.3 (first test-dims))
                          (* 0.7 (first test-dims)))
+              (r/filter identity)
               (r/map parse-line)
               (r/map (partial reduce +))
               (r/reduce +)))))
@@ -234,11 +255,13 @@
   (is (= (->> (subvec test-data
                       (* 0.3 (first test-dims))
                       (* 0.7 (first test-dims)))
+              (r/filter identity)
               (r/map (partial reduce +))
               (r/fold +))
          (->> (io/subvec test-vec
                          (* 0.3 (first test-dims))
                          (* 0.7 (first test-dims)))
+              (r/filter identity)
               (r/map parse-line)
               (r/map (partial reduce +))
               (r/fold +)))))
@@ -247,11 +270,13 @@
   (is (= (->> (subvec test-data
                       (* 0.3 (first test-dims))
                       (* 0.7 (first test-dims)))
+              (filter identity)
               (map (partial reduce +))
               (reduce +))
          (->> (io/subvec test-nvec
                          (* 0.3 (first test-dims))
                          (* 0.7 (first test-dims)))
+              (filter identity)
               (map (comp rest parse-line))
               (map (partial reduce +))
               (reduce +)))))
@@ -260,11 +285,13 @@
   (is (= (->> (subvec test-data
                       (* 0.3 (first test-dims))
                       (* 0.7 (first test-dims)))
+              (r/filter identity)
               (r/map (partial reduce +))
               (r/reduce +))
          (->> (io/subvec test-nvec
                          (* 0.3 (first test-dims))
                          (* 0.7 (first test-dims)))
+              (r/filter identity)
               (r/map (comp rest parse-line))
               (r/map (partial reduce +))
               (r/reduce +)))))
@@ -273,11 +300,13 @@
   (is (= (->> (subvec test-data
                       (* 0.3 (first test-dims))
                       (* 0.7 (first test-dims)))
+              (r/filter identity)
               (r/map (partial reduce +))
               (r/fold +))
          (->> (io/subvec test-nvec
                          (* 0.3 (first test-dims))
                          (* 0.7 (first test-dims)))
+              (r/filter identity)
               (r/map (comp rest parse-line))
               (r/map (partial reduce +))
               (r/fold +)))))
