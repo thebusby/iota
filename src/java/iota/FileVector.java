@@ -34,6 +34,8 @@ public class FileVector extends APersistentVector {
     public String[]               cachedChunk;
 
 
+
+
     // Constructors
     //
     public FileVector(String filename) throws IOException {
@@ -50,6 +52,7 @@ public class FileVector extends APersistentVector {
 	long            lc = 0; // Line count
 	long           pos = 0; // Position in file
 	long      fileSize = map.size(); // Total bytes in file
+	int        remsize = 0; // Bytes remaining in buf
 
 	// Capture the start of the file
 	al.add( new Long(0) );
@@ -58,7 +61,7 @@ public class FileVector extends APersistentVector {
 	while( pos < fileSize ) {
 
 	    // Populate buffer
-	    int remsize =  (int)Math.min( (long)(fileSize - pos), (long)BUFSIZE );
+	    remsize = (int)Math.min( (long)(fileSize - pos), (long)BUFSIZE );
 	    map.get(buf, pos, remsize);
 
 	    // Iterate over every byte in the buffer
@@ -73,6 +76,11 @@ public class FileVector extends APersistentVector {
 	    pos+=remsize;
 	}
 	al.add( new Long(pos) ); // Capture the EOF
+
+	// Handle trailing text between \n and EOF
+	if(buf[remsize-1] != 10) {
+	    lc++;
+	}
 
 	// Record line count
 	this.lineCount = (int)lc;

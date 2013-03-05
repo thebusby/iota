@@ -1,9 +1,11 @@
-(defproject iota "1.0.0-SNAPSHOT"
-  :description "The garden gnomes told me how!"
-  :dependencies [[org.clojure/clojure "1.5.0-alpha2"]]
-  :dev-dependencies [[swank-clojure "1.4.0"]]
-  :source-path "src/clj"
-  :java-source-path "src/java"
+(defproject iota "1.0.0"
+  :description        "Allows Clojure's reducers to operate over mmap()'ed text files"
+  :url                "https://clojars.org/iota"
+  :license            {:name "Eclipse Public License"
+                       :url "http://www.eclipse.org/legal/epl-v10.html"}
+  :dependencies       [[org.clojure/clojure "1.5.0"]]
+  :source-paths       ["src/clj"]
+  :java-source-paths  ["src/java"]
   :warn-on-reflection true
-  :disable-implicit-clean true
-  :main iota)
+  :min-lein-version "2.0.0"
+  )
