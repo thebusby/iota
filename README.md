@@ -32,6 +32,34 @@ for iota/numbered-vec, empty lines will return the line number as a String.
 ```
 
 
+## Artifacts
+
+Iota artifacts are [released to Clojars](https://clojars.org/iota).
+
+If you are using Maven, add the following repository definition to your `pom.xml`:
+
+``` xml
+<repository>
+  <id>clojars</id>
+  <url>http://clojars.org/repo</url>
+</repository>
+```
+
+### The Most Recent Release
+
+With Leiningen:
+
+    [iota "1.0.2"]
+
+
+With Maven:
+
+    <dependency>
+      <groupId>iota</groupId>
+      <artifactId>iota</artifactId>
+      <version>1.0.2</version>
+    </dependency>
+
 
 ## License
 
