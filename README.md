@@ -1,15 +1,17 @@
 # Iota
 
-Iota is a simple library that applies a wrapper over Java NIO's mmap() functionality to produce a vector like object compatible with Clojure 1.5's reducers. Each element in the vector is associated with a single line in the file. O(1) lookup speed is maintained via a simple index. 
+Iota is a simple library which indexes text files via Java NIO's mmap() to produce a vector like data structure. This allows for using Clojure 1.5's reducers to operate over text files larger than memory in parallel. Each element in the iota vector is associated with a single line in the file, and O(1) lookup speed are maintained via a simple index. 
 
-This not only enables the use of reducers for greatly improved parallel performance, but allows text files to be stored in memory without java doubling or even tripling the amount of memory required (due to UTF-16 encoding, and String overhead).
+This not only enables the use of reducers, for greatly improved parallel performance; but allows large text files to be stored in memory without Java doubling or even tripling the amount of memory required (due to unicode encodings, and java.lang.String overhead).
 
-Note: empty lines will return nil.
+Note: 
+for iota/vec, empty lines will return nil.
+for iota/numbered-vec, empty lines will return the line number as a String.
 
 
 ## Usage
 ```clojure
-(def mem-file (iota/vec filename)) ;; Map the file into memory
+(def mem-file (iota/vec filename)) ;; Map the file into memory, and generate index of lines
 
 (first mem-file) ;; Returns first line of file
 
@@ -38,7 +40,7 @@ http://creativecommons.org/publicdomain/zero/1.0/
 
 I'd also like to thank my employer Gracenote, for allowing me to create this open source port.
 
-NOTE: Relevant bits of iota/core.clj such as fjinvoke, fjfork, fjjoin, and various bits of iota/FileVector's implementation of Clojure interfaces were copied/modified from Rich Hickey's Clojure. These bits fall under the original owner's license (EPL at this time).
+NOTE: Relevant bits of iota/core.clj such as fjinvoke, fjfork, fjjoin, and various bits of iota/FileVector's implementation of Clojure interfaces were copied/modified from Rich Hickey's Clojure. These bits fall under the original owner's license (EPL at the time of writing).
 
 
 Copyright (C) 2012 Alan Busby
