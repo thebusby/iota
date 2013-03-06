@@ -1,4 +1,4 @@
-(defproject iota "1.0.0"
+(defproject iota "1.0.1"
   :description        "Allows Clojure's reducers to operate over mmap()'ed text files"
   :url                "https://clojars.org/iota"
   :license            {:name "Eclipse Public License"
@@ -6,6 +6,6 @@
   :dependencies       [[org.clojure/clojure "1.5.0"]]
   :source-paths       ["src/clj"]
   :java-source-paths  ["src/java"]
-  :warn-on-reflection true
-  :min-lein-version "2.0.0"
-  )
+  :source-paths       "src/clj"
+  :java-source-paths  "src/java"
+  :warn-on-reflection true)
