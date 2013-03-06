@@ -315,7 +315,9 @@ public class FileVector extends APersistentVector {
 
 	public Object first(){
 	    // System.out.println("FileVectorSeq.first(" + i + ")");	
-	    return v.nth(i);
+	    if (this.i < v.count())
+		return v.nth(i);
+	    return null;
 	}
 
 	public ISeq next(){
