@@ -6,6 +6,6 @@
   :dependencies       [[org.clojure/clojure "1.5.0"]]
   :source-paths       ["src/clj"]
   :java-source-paths  ["src/java"]
-  :source-paths       "src/clj"
-  :java-source-paths  "src/java"
+  :source-path        "src/clj"
+  :java-source-path   "src/java"
   :warn-on-reflection true)
