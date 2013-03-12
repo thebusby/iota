@@ -33,6 +33,11 @@
 ;; Code to enable reducers;
 ;; ;;; ;; ;;; ;; ;;; ;; ;;; ;; ;;; ;; ;;; ;; ;;; ;; ;;; ;; ;;;
 
+;; Bind to core.reducer's private ForkJoin functions
+(def fjinvoke #'r/fjinvoke)
+(def fjfork #'r/fjfork)
+(def fjjoin #'r/fjjoin)
+
 
 ;; Implement CollFold for FileVector
 ;; Note: copied+modified from clojure.core.reducers/foldvec
@@ -47,11 +52,11 @@
          v1 (.subvec v 0 split)
          v2 (.subvec v split (count v))
          fc (fn [child] #(foldvec child n combinef reducef))]
-     (#'r/fjinvoke
+     (fjinvoke
       #(let [f1 (fc v1)
              t2 (r/fjtask (fc v2))]
-         (#'r/fjfork t2)
-         (combinef (f1) (#'r/fjjoin t2)))))))
+         (fjfork t2)
+         (combinef (f1) (fjjoin t2)))))))
 
 (extend-protocol r/CollFold
   iota.FileVector
