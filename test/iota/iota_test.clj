@@ -44,6 +44,7 @@
   "Setup a file full of test-data in system's temp dir
    and create test-vec and test-nvec pointing to it."
   (let [test-file (str (System/getProperty "java.io.tmpdir")
+                       (System/getProperty "file.separator")
                        (java.util.UUID/randomUUID)
                        ".tsv")]
 
