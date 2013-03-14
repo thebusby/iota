@@ -1,3 +1,9 @@
+
+Available via [clojars](http://clojars.org/search?q=iota)   
+Current stable version: [iota "1.0.3"]
+[![Build Status](https://api.travis-ci.org/thebusby/iota.png?branch=master)](https://travis-ci.org/thebusby/iota)
+
+
 # Iota
 
 Iota is a simple library which indexes text files via Java NIO's mmap() to produce a vector like data structure. This allows for using Clojure 1.5's reducers to operate over text files larger than memory in parallel. Each element in the iota vector is associated with a single line in the file, and O(1) lookup speed are maintained via a simple index. 
@@ -49,7 +55,7 @@ If you are using Maven, add the following repository definition to your `pom.xml
 
 With Leiningen:
 
-    [iota "1.0.2"]
+    [iota "1.0.3"]
 
 
 With Maven:
@@ -57,7 +63,7 @@ With Maven:
     <dependency>
       <groupId>iota</groupId>
       <artifactId>iota</artifactId>
-      <version>1.0.2</version>
+      <version>1.0.3</version>
     </dependency>
 
 
@@ -71,6 +77,6 @@ I'd also like to thank my employer Gracenote, for allowing me to create this ope
 NOTE: Relevant bits of iota/core.clj such as fjinvoke, fjfork, fjjoin, and various bits of iota/FileVector's implementation of Clojure interfaces were copied/modified from Rich Hickey's Clojure. These bits fall under the original owner's license (EPL at the time of writing).
 
 
-Copyright (C) 2012 Alan Busby
+Copyright (C) 2012-2013 Alan Busby
 
 
