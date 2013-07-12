@@ -9,5 +9,4 @@
   :source-paths       ["src/clj"]
   :java-source-paths  ["src/java"]
   :source-path        "src/clj"
-  :java-source-path   "src/java"
-  :warn-on-reflection true)
+  :java-source-path   "src/java")

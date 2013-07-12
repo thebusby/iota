@@ -21,6 +21,7 @@ public class FileVector extends APersistentVector {
 
     // Static Variables
     final static int  DEFAULT_CHUNK_SIZE = 10;
+    final static byte DEFAULT_SEP        = 10; // Newline in ASCII
     final static int  BUFSIZE            = 4096;
     public final static FileVector EMPTY = new FileVector(null, null, FileVector.DEFAULT_CHUNK_SIZE, 0);
 
@@ -43,6 +44,10 @@ public class FileVector extends APersistentVector {
     }
 
     public FileVector(String filename, int chunkSize) throws IOException {
+	this(filename, FileVector.DEFAULT_CHUNK_SIZE, FileVector.DEFAULT_SEP);
+    }
+
+    public FileVector(String filename, int chunkSize, byte sep) throws IOException {
 	this.map           = new Mmap( filename );
 	this.chunkSize     = chunkSize;
 	this.cachedChunkId = -1;
@@ -66,7 +71,7 @@ public class FileVector extends APersistentVector {
 
 	    // Iterate over every byte in the buffer
 	    for(int i=0; i < remsize; i++) {	 // Bytes
-		if(buf[i] == 10) {               // Newlines
+		if(buf[i] == sep) {               // Newlines
 		    lc++;
 		    if ((lc % chunkSize) == 0) { // Chunks
 			al.add( new Long(pos + i + 1) );
@@ -78,7 +83,7 @@ public class FileVector extends APersistentVector {
 	al.add( new Long(pos) ); // Capture the EOF
 
 	// Handle trailing text between \n and EOF
-	if(buf[remsize-1] != 10) {
+	if(buf[remsize-1] != sep) {
 	    lc++;
 	}
 
@@ -106,7 +111,7 @@ public class FileVector extends APersistentVector {
 	long      pos = chunkIndex[i++];
 	int      size = (int)(chunkIndex[i] - pos);
 	byte[]    buf = new byte[size];
-	String[]   rv = new String[chunkSize];
+	String[]   rv = null;
 
 	try {
 	    // Grab chunk from memory

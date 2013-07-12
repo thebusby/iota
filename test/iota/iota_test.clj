@@ -11,7 +11,8 @@
                       (mapv  (comp vec #(range % (+ % columns))))                      
                       vec
                       (#(conj % [0] nil nil nil [42]))))) ;; Add some trailing garbage to make it interesting
-(def ^:dynamic test-vec nil) ;; Will bind an iota/vec here
+(def ^:dynamic test-vec  nil) ;; Will bind an iota/vec here
+(def ^:dynamic test-seq  nil) ;; Will bind an iota/vec here
 (def ^:dynamic test-nvec nil) ;; Will bind an numbered-vec here
 
 (defn serialize-rec [rec]
@@ -58,7 +59,8 @@
                (apply str)))
 
     ;; Load iota vec's and run tests
-    (binding [test-vec  (io/vec test-file)
+    (binding [test-seq  (io/seq test-file)
+              test-vec  (io/vec test-file)
               test-nvec (io/numbered-vec test-file)]
       (f))
 
@@ -88,6 +90,22 @@
 (deftest test-last
   (is (= (last test-data)
          (-> test-vec
+             last
+             deserialize-rec))))
+
+(deftest test-scount
+  (is (= (count test-data)
+         (count test-seq))))
+
+(deftest test-sfirst
+  (is (= (first test-data)
+         (-> test-seq
+             first
+             deserialize-rec))))
+
+(deftest test-slast
+  (is (= (last test-data)
+         (-> test-seq
              last
              deserialize-rec))))
 
@@ -163,6 +181,20 @@
                                (->> test-nvec
                                     (my-f identity)
                                     (my-m (comp rest deserialize-rec))
+                                    (my-m (partial reduce +))
+                                    (my-r +))))
+       filter map reduce
+       r/filter r/map r/reduce
+       r/filter r/map r/fold))
+
+(deftest test-total-sum-s
+  (are [my-f my-m my-r] (is (= (->> test-data
+                                    (my-f identity)
+                                    (my-m (partial reduce +))
+                                    (my-r +))
+                               (->> test-seq
+                                    (my-f identity)
+                                    (my-m deserialize-rec)
                                     (my-m (partial reduce +))
                                     (my-r +))))
        filter map reduce
