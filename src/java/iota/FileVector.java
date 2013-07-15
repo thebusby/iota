@@ -139,8 +139,6 @@ public class FileVector extends APersistentVector {
 	int  chunk_n   = i % chunkSize;
 	String   rv    = null;
 
-	// System.out.println("getLine(v, " + i + ")");
-
 	if( (chunk < 0) || (chunk >= this.chunkIndex.length) )
 	    throw new IndexOutOfBoundsException("getLine() failure: " + chunk + " is not within  0..." + this.chunkIndex.length);
 
@@ -170,7 +168,6 @@ public class FileVector extends APersistentVector {
     }
 
     public FileVector subvec(int start, int end){
-	// System.out.println("subvec(" + start + ", " + end + ")");
 	if(end < start || start < 0 || end > this.count())
 	    throw new IndexOutOfBoundsException("[" + start + ", " + end + "] not between 0 and " + this.count() + ".");
 	if(start == end)
@@ -200,11 +197,9 @@ public class FileVector extends APersistentVector {
 	    this.v = v;
 	    this.start = start;
 	    this.end = end;
-	    // System.out.println("SubFileVector(v, " + start + ", " + end + ")");	
 	}
 
 	public String nth(int i){
-	    // System.out.println("SubFileVector.nth(" + i + ")");	
 	    if((start + i >= end) || (i < 0))
 		throw new IndexOutOfBoundsException("bad value for " + i + " since it's really " + start + " + " + i + " which is outside " + end);
 
@@ -218,7 +213,6 @@ public class FileVector extends APersistentVector {
 	}
 
 	public ISeq seq(){
-	    // System.out.println("SubFileVector.seq()");	
 	    return new FileVectorSeq(this);
 	}
     }
@@ -226,7 +220,6 @@ public class FileVector extends APersistentVector {
 
     /* For clojure.lang.Indexed */
     public String nth(int i){
-	// System.out.println("nth(" + i + ")");	
 	return getLine(i);
     }
 
@@ -244,7 +237,6 @@ public class FileVector extends APersistentVector {
     }
 
     public String first(){
-	// System.out.println("first()");	
 	return nth(0);
     }
 
@@ -267,12 +259,10 @@ public class FileVector extends APersistentVector {
     }
 
     public ISeq seq(){
-	// System.out.println("seq()");	
     	return new FileVectorSeq(this);
     }
 
     public Iterator iterator(){
-	// System.out.println("iterator()");	
 	return rangedIterator(0, count());
     }
 
@@ -286,7 +276,6 @@ public class FileVector extends APersistentVector {
 	    }
 
 	    public Object next(){
-		// System.out.println("rangedIterator.next(" + i + ")");	
 		return nth(i++);
 	    }
 
@@ -319,14 +308,12 @@ public class FileVector extends APersistentVector {
 	}
 
 	public Object first(){
-	    // System.out.println("FileVectorSeq.first(" + i + ")");	
 	    if (this.i < v.count())
 		return v.nth(i);
 	    return null;
 	}
 
 	public ISeq next(){
-	// System.out.println("");	
 	    if ((this.i + 1) < v.count())
 		return new FileVectorSeq(this.v, (this.i + 1) );
 	    return null;
