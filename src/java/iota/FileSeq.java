@@ -110,6 +110,11 @@ public class FileSeq extends ASeq {
 	    // Not handling encoding exceptions properly!!!
 	}
 
+	// Convert "" to null
+	if(rv.isEmpty()) {
+	    return null;
+	}
+
 	return rv;
     }
 
@@ -133,6 +138,13 @@ public class FileSeq extends ASeq {
 	try {
 	    String sbuf = new String(buf, 0, size, "UTF-8");
 	    rv = sbuf.split("[\n]", -1);
+
+	    // Convert "" to null
+	    for(int i=0; i < rv.length; i++) {
+		if(rv[i].isEmpty()) {
+		    rv[i] = null;
+		}
+	    }
 	} catch (UnsupportedEncodingException e)  {
 	    // DEBUG / ERROR / ETC
 	    // Not handling encoding exceptions properly!!!
