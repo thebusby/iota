@@ -104,8 +104,8 @@ With Maven:
 
 ## License
 
-CC0
-http://creativecommons.org/publicdomain/zero/1.0/
+MIT
+http://opensource.org/licenses/MIT
 
 I'd also like to thank my employer Gracenote, for allowing me to create this open source port.
 
