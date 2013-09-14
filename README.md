@@ -1,4 +1,3 @@
-
 Available via [clojars](http://clojars.org/search?q=iota),  
 Current stable version: [iota "1.1.1"]
 [![Build Status](https://api.travis-ci.org/thebusby/iota.png?branch=master)](https://travis-ci.org/thebusby/iota)
@@ -108,8 +107,5 @@ MIT
 http://opensource.org/licenses/MIT
 
 I'd also like to thank my employer Gracenote, for allowing me to create this open source port.
-
-NOTE: Relevant bits of iota/core.clj such as fjinvoke, fjfork, fjjoin, and various bits of iota/FileVector's implementation of Clojure interfaces were copied/modified from Rich Hickey's Clojure. These bits fall under the original owner's license (EPL).
-
 
 Copyright (C) 2012-2013 Alan Busby
