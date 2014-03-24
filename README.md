@@ -1,5 +1,5 @@
 Available via [clojars](http://clojars.org/search?q=iota),  
-Current stable version: [iota "1.1.1"]
+Current stable version: [iota "1.1.2"]
 [![Build Status](https://api.travis-ci.org/thebusby/iota.png?branch=master)](https://travis-ci.org/thebusby/iota)
 
 
@@ -88,7 +88,7 @@ If you are using Maven, add the following repository definition to your `pom.xml
 
 With Leiningen:
 ```clojure
-    [iota "1.1.1"]
+    [iota "1.1.2"]
 ```
 
 With Maven:
@@ -96,7 +96,7 @@ With Maven:
     <dependency>
       <groupId>iota</groupId>
       <artifactId>iota</artifactId>
-      <version>1.1.1</version>
+      <version>1.1.2</version>
     </dependency>
 ```
 

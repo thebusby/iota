@@ -1,4 +1,4 @@
-(defproject iota "1.1.1"
+(defproject iota "1.1.2"
   :description        "Allows Clojure's reducers to operate over mmap()'ed text files"
   :url                "https://github.com/thebusby/iota"
   :license            {:name "MIT"

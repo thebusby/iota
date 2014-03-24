@@ -137,7 +137,7 @@ public class FileSeq extends ASeq {
 
 	try {
 	    String sbuf = new String(buf, 0, size, "UTF-8");
-	    rv = sbuf.split("[\n]", -1);
+	    rv = sbuf.split("[" + new String(new byte[]{this.linesep}) + "]", -1);
 
 	    // Convert "" to null
 	    for(int i=0; i < rv.length; i++) {

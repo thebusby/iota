@@ -30,6 +30,7 @@ public class FileVector extends APersistentVector {
     public final long[]           chunkIndex;
     public final int              chunkSize;
     public final int              lineCount;
+    public final byte             sep;
 
     public int                    cachedChunkId;
     public String[]               cachedChunk;
@@ -51,6 +52,7 @@ public class FileVector extends APersistentVector {
 	this.map           = new Mmap( filename );
 	this.chunkSize     = chunkSize;
 	this.cachedChunkId = -1;
+	this.sep           = sep;
 
 	ArrayList<Long> al = new ArrayList<Long>();
 	byte[]         buf = new byte[BUFSIZE];
@@ -82,7 +84,7 @@ public class FileVector extends APersistentVector {
 	}
 	al.add( new Long(pos) ); // Capture the EOF
 
-	// Handle trailing text between \n and EOF
+	// Handle trailing text between byte sep and EOF
 	if(buf[remsize-1] != sep) {
 	    lc++;
 	}
@@ -104,6 +106,7 @@ public class FileVector extends APersistentVector {
 	this.cachedChunkId = -1;
 	this.lineCount     = lineCount;
 	this.chunkIndex    = chunkIndex;
+	this.sep           = this.DEFAULT_SEP;
     }
 
 
@@ -119,7 +122,7 @@ public class FileVector extends APersistentVector {
 
 	    // Convert to string and split on lines
 	    String sbuf = new String(buf, 0, size, "UTF-8");
-	    rv = sbuf.split("[\n]", -1);
+	    rv = sbuf.split("[" + new String(new byte[]{this.sep}) + "]", -1);
 	}
 	catch (UnsupportedEncodingException e)  {
 	    // DEBUG / ERROR / ETC
