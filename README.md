@@ -1,5 +1,4 @@
-Available via [clojars](http://clojars.org/search?q=iota),  
-Current stable version: [iota "1.1.2"]
+[![Clojars](http://clojars.org/iota/latest-version.svg)](http://clojars.org/iota)
 [![Build Status](https://api.travis-ci.org/thebusby/iota.png?branch=master)](https://travis-ci.org/thebusby/iota)
 
 
@@ -73,33 +72,7 @@ Via reducers | Buffer is divided in half repeatedly until it is smaller than spe
 
 ## Artifacts
 
-Iota artifacts are [released to Clojars](https://clojars.org/iota).
-
-If you are using Maven, add the following repository definition to your `pom.xml`:
-
-``` xml
-<repository>
-  <id>clojars</id>
-  <url>http://clojars.org/repo</url>
-</repository>
-```
-
-### The Most Recent Release
-
-With Leiningen:
-```clojure
-    [iota "1.1.2"]
-```
-
-With Maven:
-``` xml
-    <dependency>
-      <groupId>iota</groupId>
-      <artifactId>iota</artifactId>
-      <version>1.1.2</version>
-    </dependency>
-```
-
+Iota artifacts are [available on Clojars](https://clojars.org/iota) with instructions for leiningen, gradle, and maven.
 
 ## License
 
