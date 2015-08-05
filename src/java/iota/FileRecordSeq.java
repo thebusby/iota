@@ -81,7 +81,7 @@ public class FileRecordSeq extends ASeq {
         }
     }
 
-    public Chunk nextSplit(Chunk chunk, int end, byte[] sep) {
+    private Chunk nextSplit(Chunk chunk, int end, byte[] sep) {
         // need to match separators also on the border of chunks
         int matchIndex = chunk.matchIndex;
         boolean lastMatch;
@@ -106,7 +106,7 @@ public class FileRecordSeq extends ASeq {
         return chunk.setValues(chunk.end, end, false, matchIndex);
     }
 
-    public long nextChunkEnd(long start, long end, byte[] sep) {
+    private long nextChunkEnd(long start, long end, byte[] sep) {
 
         byte[] buf = new byte[bufsize];
         Chunk chunk = new Chunk(buf);
@@ -125,19 +125,23 @@ public class FileRecordSeq extends ASeq {
     }
 
     public FileRecordSeq[] split() {
-        FileRecordSeq[] rv = new FileRecordSeq[2];
+        // Find midpoint
+        return split((((end - start) / 2) + start));
+    }
+
+    public FileRecordSeq[] split(long loc) {
 
         // Only split if buffer is larger than BUFSIZE
         if ((end - start) < bufsize) {
             return null;
         }
 
-        // Find midpoint
-        long eor = nextChunkEnd((((end - start) / 2) + start), end, splitsep);
+        long eor = nextChunkEnd(loc, end, splitsep);
         if (eor == -1 || eor >= end) {
             return null;
         }
 
+        FileRecordSeq[] rv = new FileRecordSeq[2];
         // Create new for left and right
         rv[0] = new FileRecordSeq(map, start, eor, bufsize, splitsep);
         rv[1] = new FileRecordSeq(map, eor, end, bufsize, splitsep);

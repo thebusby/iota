@@ -23,3 +23,18 @@
          (trim (last (io/rec-seq tfile 10 sep)))))
 
   )
+
+(deftest simple-chunk-read
+
+  (is (= 1 (count (io/chunk-seq tfile 1000 sep))))
+
+  (is (= 2 (count (io/chunk-seq tfile 15 sep))))
+
+  (is (= 3 (count (io/chunk-seq tfile 10 sep))))
+
+  (is (= "<a>\nfirst\n</a>"
+         (ffirst (io/chunk-seq tfile 15 sep))))
+
+  (is (= "<a>\nlast\n</a>"
+         (trim (first (second (io/chunk-seq tfile 15 sep))))))
+  )
