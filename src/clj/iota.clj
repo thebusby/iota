@@ -1,7 +1,7 @@
 (ns iota
   "A set of tools for using reducers over potentially very large text files."
   (:require [clojure.core.reducers :as r])
-  (:import (iota FileVector NumberedFileVector FileSeq))
+  (:import (iota FileVector NumberedFileVector FileSeq FileRecordSeq FileChunkSeq))
   (:refer-clojure :exclude [vec subvec seq]))
 
 (set! *warn-on-reflection* true)
@@ -31,15 +31,32 @@
    similar to a normal Clojure vector. This is significantly more memory effecient than
    a vector of Strings.
 
-   You can provide the chunk size and a single char field delimiter as well."  
+   You can provide the chunk size and a single char field delimiter as well."
   ([^java.lang.String filename] (FileVector. filename))
   ([^java.lang.String filename chunk-size] (new iota.FileVector filename (int chunk-size)))
   ([^java.lang.String filename chunk-size byte-separator] (new iota.FileVector filename (int chunk-size) (byte byte-separator))))
 
+(defn ^iota.FileRecordSeq rec-seq
+  "Almost same as FileSeq but record separator can be multibyte array and
+   it will *not* strip newlines or separators from output strings."
+  ([^java.lang.String filename] (FileRecordSeq. filename))
+  ([^java.lang.String filename buffer-size] (FileRecordSeq. filename (int buffer-size)))
+  ([^java.lang.String filename buffer-size separator]
+   (FileRecordSeq. filename (int buffer-size) (if (sequential? separator)
+                                                (byte-array (map byte separator))
+                                                (byte-array [(byte separator)])))))
+
+(defn ^iota.FileChunkSeq chunk-seq
+  "Returns the sequence of arrays from underlying file seq.
+   Useful for iterable folds which don't support CollFold protocol."
+  ([^java.lang.String filename] (FileChunkSeq. (rec-seq filename)))
+  ([^java.lang.String filename buffer-size] (FileChunkSeq. (rec-seq filename buffer-size)))
+  ([^java.lang.String filename buffer-size separator] (FileChunkSeq. (rec-seq filename buffer-size separator))))
+
 (defn subvec
   "Return a subset of the provided flatfileclj vector.
    If end not provided, defaults to (count v)."
-  ([^iota.FileVector v start]     (subvec  v start (count v)))
+  ([^iota.FileVector v start] (subvec v start (count v)))
   ([^iota.FileVector v start end] (.subvec v start end)))
 
 (defn numbered-vec
@@ -67,18 +84,18 @@
   "Utility function to enable reducers for Itoa Vector's"
   [^iota.FileVector v n combinef reducef]
   (cond
-   (empty? v) (combinef)
-   (<= (count v) n) (reduce reducef (combinef) v)
-   :else    
-   (let [split (quot (count v) 2)
-         v1 (.subvec v 0 split)
-         v2 (.subvec v split (count v))
-         fc (fn [child] #(foldvec child n combinef reducef))]
-     (fjinvoke
-      #(let [f1 (fc v1)
-             t2 (r/fjtask (fc v2))]
-         (fjfork t2)
-         (combinef (f1) (fjjoin t2)))))))
+    (empty? v) (combinef)
+    (<= (count v) n) (reduce reducef (combinef) v)
+    :else
+    (let [split (quot (count v) 2)
+          v1 (.subvec v 0 split)
+          v2 (.subvec v split (count v))
+          fc (fn [child] #(foldvec child n combinef reducef))]
+      (fjinvoke
+        #(let [f1 (fc v1)
+               t2 (r/fjtask (fc v2))]
+          (fjfork t2)
+          (combinef (f1) (fjjoin t2)))))))
 
 (defn- foldseq
   "Utility function to enable reducers for Iota Seq's"
@@ -86,10 +103,22 @@
   (if-let [[v1 v2] (.split s)]
     (let [fc (fn [child] #(foldseq child n combinef reducef))]
       (fjinvoke
-       #(let [f1 (fc v1)
-              t2 (r/fjtask (fc v2))]
-         (fjfork t2)
-         (combinef (f1) (fjjoin t2)))))
+        #(let [f1 (fc v1)
+               t2 (r/fjtask (fc v2))]
+          (fjfork t2)
+          (combinef (f1) (fjjoin t2)))))
+    (reduce reducef (combinef) (.toArray s))))
+
+(defn- foldrecseq
+  "Utility function to enable reducers for Iota RecordSeq's"
+  [^iota.FileRecordSeq s n combinef reducef]
+  (if-let [[v1 v2] (.split s)]
+    (let [fc (fn [child] #(foldrecseq child n combinef reducef))]
+      (fjinvoke
+        #(let [f1 (fc v1)
+               t2 (r/fjtask (fc v2))]
+          (fjfork t2)
+          (combinef (f1) (fjjoin t2)))))
     (reduce reducef (combinef) (.toArray s))))
 
 (extend-protocol r/CollFold
@@ -100,4 +129,8 @@
   iota.FileSeq
   (coll-fold
     [v n combinef reducef]
-    (foldseq v n combinef reducef)))
+    (foldseq v n combinef reducef))
+  iota.FileRecordSeq
+  (coll-fold
+    [v n combinef reducef]
+    (foldrecseq v n combinef reducef)))

@@ -1,6 +1,7 @@
 (ns iota.iota-test
   (:use clojure.test)
   (:require [iota :as io]
+            [clojure.string :as str]
             [clojure.core.reducers :as r]))
 
 
@@ -13,6 +14,7 @@
                       (#(conj % [0] nil nil nil [42]))))) ;; Add some trailing garbage to make it interesting
 (def ^:dynamic test-vec  nil) ;; Will bind an iota/vec here
 (def ^:dynamic test-seq  nil) ;; Will bind an iota/vec here
+(def ^:dynamic test-rseq  nil) ;; Will bind an iota/rec-sec here
 (def ^:dynamic test-nvec nil) ;; Will bind an numbered-vec here
 
 (defn serialize-rec [rec]
@@ -60,6 +62,7 @@
 
     ;; Load iota vec's and run tests
     (binding [test-seq  (io/seq test-file)
+              test-rseq  (io/rec-seq test-file)
               test-vec  (io/vec test-file)
               test-nvec (io/numbered-vec test-file)]
       (f))
@@ -97,16 +100,34 @@
   (is (= (count test-data)
          (count test-seq))))
 
+(deftest test-srcount
+  (is (= (count test-data)
+         (count test-rseq))))
+
 (deftest test-sfirst
   (is (= (first test-data)
          (-> test-seq
              first
              deserialize-rec))))
 
+(deftest test-srfirst
+  (is (= (first test-data)
+         (-> test-rseq
+             first
+             str/trim-newline
+             deserialize-rec))))
+
 (deftest test-slast
   (is (= (last test-data)
          (-> test-seq
              last
+             deserialize-rec))))
+
+(deftest test-srlast
+  (is (= (last test-data)
+         (-> test-rseq
+             last
+             str/trim-newline
              deserialize-rec))))
 
 (deftest test-nth
@@ -200,6 +221,21 @@
        filter map reduce
        r/filter r/map r/reduce
        r/filter r/map r/fold))
+
+(deftest test-total-sum-sr
+  (are [my-f my-m my-r] (is (= (->> test-data
+                                    (my-f identity)
+                                    (my-m (partial reduce +))
+                                    (my-r +))
+                               (->> test-rseq
+                                    (my-f (complement str/blank?))
+                                    (my-m str/trim-newline)
+                                    (my-m deserialize-rec)
+                                    (my-m (partial reduce +))
+                                    (my-r +))))
+                        filter map reduce
+                        r/filter r/map r/reduce
+                        r/filter r/map r/fold))
 
 (deftest test-total-sub-subvec
   (dotimes [n 1000]
