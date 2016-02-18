@@ -29,9 +29,10 @@ Random access | O(N), just don't | Quick, O(1) via index
 Via reducers | Buffer is divided in half repeatedly until it is smaller than specified size, and then entire buffer is converted to String[] for processing | treated exactly like a Clojure vector, but each thread gets it's own cache.
 
 ##### Advice
-* If you'll only be reading the entire file, then use iota/seq. 
-* If you need random access across the file, then use iota/vec. 
-* If you need random access and line numbers, then iota/numbered-vec.
+* If you'll only be reading the entire file at a time, then use ```iota/seq```. 
+* If you need random access across the file, then use ```iota/vec```. 
+* If you need random access and line numbers, then ```iota/numbered-vec```.
+* **WARNING** If you're not using reducers with ```iota/seq```, use Clojure's ```line-seq``` instead! 
 
 ##### Note
 * for iota/vec and iota/seq, empty lines will return nil.
