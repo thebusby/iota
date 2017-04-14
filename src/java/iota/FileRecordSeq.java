@@ -111,7 +111,10 @@ public class FileRecordSeq extends ASeq {
         byte[] buf = new byte[bufsize];
         Chunk chunk = new Chunk(buf);
         for (long i = start; i < end; i += bufsize) {
-            int remsize = Math.min((int) (end - i), bufsize);
+            int remsize = bufsize;
+            if (end - i < remsize) {
+                remsize = (int) (end - i);
+            }
 
             map.get(buf, i, remsize);
 
@@ -151,7 +154,7 @@ public class FileRecordSeq extends ASeq {
     public Object first() {
         long eor = nextChunkEnd(start, end, splitsep);
         eor = eor == -1 ? end : eor;
-        int size = (int)(eor - start);
+        int size = (int) (eor - start);
         byte[] buf = new byte[size];
         map.get(buf, start, size);
         String rv = null;
@@ -177,7 +180,7 @@ public class FileRecordSeq extends ASeq {
     }
 
     public Object[] toArray() {
-        int size = (int)(end - start); // this better be smaller than 2GB!
+        int size = (int) (end - start); // this better be smaller than 2GB!
         byte[] buf = new byte[size];
         map.get(buf, start, size);
         ArrayList<String> rv = new ArrayList<String>();
